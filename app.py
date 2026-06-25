@@ -3,26 +3,33 @@ from datetime import datetime, date
 
 st.set_page_config(page_title="Algolex Student Dashboard", page_icon="🎓", layout="wide")
 
-# Algolex Branding
-st.markdown("<style>.main-header {font-size:2.5rem; font-weight:700; color:#1E40AF} .company {color:#64748B; font-size:1.1rem;}</style>", unsafe_allow_html=True)
+# ====================== ALGOLEX LOGO ======================
+# To add your logo:
+# 1. Upload your logo image (logo.png) to this GitHub repo
+# 2. Replace the URL below with your logo's raw GitHub URL
+# Example: https://raw.githubusercontent.com/kmukesh1/student-dashboard/main/logo.png
 
-st.sidebar.title("🎓 Algolex")
-st.sidebar.caption("Student Dashboard")
+try:
+    st.sidebar.image("https://via.placeholder.com/150x50?text=Algolex", width=150)
+except:
+    st.sidebar.write("**Algolex**")
 
-if 'notes' not in st.session_state: st.session_state.notes = []
-if 'tasks' not in st.session_state: st.session_state.tasks = []
+st.sidebar.title("Student Dashboard")
+st.sidebar.caption("Powered by Algolex")
 
+# ====================== SESSION STATE ======================
+if 'notes' not in st.session_state:
+    st.session_state.notes = []
+if 'tasks' not in st.session_state:
+    st.session_state.tasks = []
+
+# ====================== NAVIGATION ======================
 page = st.sidebar.radio("Menu", ["Dashboard", "My Notes", "Tasks", "Upload Files"])
 
 if page == "Dashboard":
-    st.markdown('<p class="main-header">Algolex Student Dashboard</p>', unsafe_allow_html=True)
-    st.caption("Welcome back! Your personal learning space.")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    with c1: st.metric("Total Notes", len(st.session_state.notes))
-    with c2: st.metric("Pending Tasks", len([t for t in st.session_state.tasks if not t.get('completed', False)]))
-    with c3: st.metric("Overdue", 0)
-    with c4: st.metric("Completed", len([t for t in st.session_state.tasks if t.get('completed', False)]))
+    st.title("Algolex Student Dashboard")
+    st.metric("Total Notes", len(st.session_state.notes))
+    st.metric("Pending Tasks", len([t for t in st.session_state.tasks if not t.get('completed', False)]))
 
 elif page == "My Notes":
     st.header("My Notes")
@@ -50,10 +57,10 @@ elif page == "Tasks":
 
 elif page == "Upload Files":
     st.header("Upload Files")
-    f = st.file_uploader("Upload PDF or Image")
+    f = st.file_uploader("Choose a file")
     if f:
         st.success(f"File uploaded: {f.name}")
         if st.button("Save to Notes"):
             st.session_state.notes.append({"title": f.name})
-            st.success("Saved to Notes!")
+            st.success("Saved!")
             st.rerun()

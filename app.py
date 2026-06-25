@@ -1,22 +1,30 @@
 import streamlit as st
 from datetime import datetime, date
 
-st.set_page_config(page_title="Student Dashboard", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Algolex Student Dashboard", page_icon="🎓", layout="wide")
 
-st.title("🎓 Student Dashboard")
+# Algolex Branding
+st.markdown("<style>.main-header {font-size:2.5rem; font-weight:700; color:#1E40AF} .company {color:#64748B; font-size:1.1rem;}</style>", unsafe_allow_html=True)
 
-if 'notes' not in st.session_state:
-    st.session_state.notes = []
-if 'tasks' not in st.session_state:
-    st.session_state.tasks = []
+st.sidebar.title("🎓 Algolex")
+st.sidebar.caption("Student Dashboard")
 
-page = st.sidebar.radio("Menu", ["Dashboard", "Notes", "Tasks", "Upload Files"])
+if 'notes' not in st.session_state: st.session_state.notes = []
+if 'tasks' not in st.session_state: st.session_state.tasks = []
+
+page = st.sidebar.radio("Menu", ["Dashboard", "My Notes", "Tasks", "Upload Files"])
 
 if page == "Dashboard":
-    st.metric("Total Notes", len(st.session_state.notes))
-    st.metric("Pending Tasks", len([t for t in st.session_state.tasks if not t.get('completed', False)]))
+    st.markdown('<p class="main-header">Algolex Student Dashboard</p>', unsafe_allow_html=True)
+    st.caption("Welcome back! Your personal learning space.")
+    
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: st.metric("Total Notes", len(st.session_state.notes))
+    with c2: st.metric("Pending Tasks", len([t for t in st.session_state.tasks if not t.get('completed', False)]))
+    with c3: st.metric("Overdue", 0)
+    with c4: st.metric("Completed", len([t for t in st.session_state.tasks if t.get('completed', False)]))
 
-elif page == "Notes":
+elif page == "My Notes":
     st.header("My Notes")
     t = st.text_input("Note Title")
     if st.button("Add Note") and t:
@@ -41,12 +49,11 @@ elif page == "Tasks":
             st.rerun()
 
 elif page == "Upload Files":
-    st.header("Upload Files (PDF, Images, etc.)")
-    uploaded_file = st.file_uploader("Choose a file", type=["pdf", "png", "jpg", "jpeg", "txt"])
-    if uploaded_file is not None:
-        st.success(f"File uploaded: {uploaded_file.name}")
-        st.write("File size:", uploaded_file.size, "bytes")
+    st.header("Upload Files")
+    f = st.file_uploader("Upload PDF or Image")
+    if f:
+        st.success(f"File uploaded: {f.name}")
         if st.button("Save to Notes"):
-            st.session_state.notes.append({"title": uploaded_file.name, "content": "Uploaded file"})
-            st.success("File saved to Notes!")
+            st.session_state.notes.append({"title": f.name})
+            st.success("Saved to Notes!")
             st.rerun()
